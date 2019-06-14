@@ -10,6 +10,7 @@ Breaking changes:
 - [debug] align commands with VS Code [#5102](https://github.com/theia-ide/theia/issues/5102)
     - `debug.restart` renamed to `workbench.action.debug.restart`
 - [preferences] renamed overridenPreferenceName to overriddenPreferenceName
+- [filesystem] Changed `FileDownloadService` API to support streaming download of huge files.
 
 ## v0.7.0
 
