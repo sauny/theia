@@ -38,15 +38,15 @@ export class FileDownloadService {
     @inject(MessageService)
     protected readonly messageService: MessageService;
 
-    protected handleCopy(event: ClipboardEvent, downloadUrl: string) {
-        if (downloadUrl) {
+    protected handleCopy(event: ClipboardEvent, downloadUrl: string): void {
+        if (downloadUrl && event.clipboardData) {
             event.clipboardData.setData('text/plain', downloadUrl);
             event.preventDefault();
             this.messageService.info('Download link copied!');
         }
     }
 
-    async cancelDownload(id: string) {
+    async cancelDownload(id: string): Promise<void> {
         await fetch(`${this.endpoint()}/download/?id=${id}&cancel=true`);
     }
 
@@ -71,7 +71,9 @@ export class FileDownloadService {
             if (status === 200) {
                 progress.cancel();
                 const downloadUrl = `${this.endpoint()}/download/?id=${jsonResponse.id}`;
-                this.messageService.info(downloadUrl, 'Download', 'Copy Download Link').then(action => {
+                // Get the name of the file for the UI, fall back to the download URL.
+                const name = jsonResponse.name ? jsonResponse.name : downloadUrl;
+                this.messageService.info(name, 'Download', 'Copy Download Link').then(action => {
                     if (action === 'Download') {
                         this.forceDownload(jsonResponse.id, decodeURIComponent(jsonResponse.name));
                         this.messageService.info('Download started!');
