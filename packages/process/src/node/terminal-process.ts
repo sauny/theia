@@ -286,5 +286,4 @@ export class TerminalProcess extends Process {
             throw new Error('pty process did not start correctly');
         }
     }
-
 }

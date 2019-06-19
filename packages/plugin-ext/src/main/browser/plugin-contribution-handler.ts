@@ -26,6 +26,7 @@ import { KeybindingsContributionPointHandler } from './keybindings/keybindings-c
 import { MonacoSnippetSuggestProvider } from '@theia/monaco/lib/browser/monaco-snippet-suggest-provider';
 import { PluginSharedStyle } from './plugin-shared-style';
 import { CommandRegistry } from '@theia/core';
+import { TaskDefinitionRegistry, ProblemMatcherRegistry, ProblemPatternRegistry } from '@theia/task/lib/common';
 
 @injectable()
 export class PluginContributionHandler {
@@ -58,6 +59,15 @@ export class PluginContributionHandler {
 
     @inject(PluginSharedStyle)
     protected readonly style: PluginSharedStyle;
+
+    @inject(TaskDefinitionRegistry)
+    protected readonly taskDefinitionRegistry: TaskDefinitionRegistry;
+
+    @inject(ProblemMatcherRegistry)
+    protected readonly problemMatcherRegistry: ProblemMatcherRegistry;
+
+    @inject(ProblemPatternRegistry)
+    protected readonly problemPatternRegistry: ProblemPatternRegistry;
 
     handleContributions(contributions: PluginContribution): void {
         if (contributions.configuration) {
@@ -148,6 +158,18 @@ export class PluginContributionHandler {
                     source: snippet.source
                 });
             }
+        }
+
+        if (contributions.taskDefinitions) {
+            contributions.taskDefinitions.forEach(def => this.taskDefinitionRegistry.register(def));
+        }
+
+        if (contributions.problemPatterns) {
+            contributions.problemPatterns.forEach(pattern => this.problemPatternRegistry.register(pattern));
+        }
+
+        if (contributions.problemMatchers) {
+            contributions.problemMatchers.forEach(matcher => this.problemMatcherRegistry.register(matcher));
         }
     }
 

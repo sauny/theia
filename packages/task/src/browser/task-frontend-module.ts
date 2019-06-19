@@ -25,11 +25,14 @@ import { TaskConfigurations } from './task-configurations';
 import { ProvidedTaskConfigurations } from './provided-task-configurations';
 import { TaskFrontendContribution } from './task-frontend-contribution';
 import { createCommonBindings } from '../common/task-common-module';
-import { TaskServer, taskPath } from '../common/task-protocol';
+import { ProblemMatcherRegistry, ProblemPatternRegistry, TaskServer, TaskDefinitionRegistry, taskPath } from '../common/task-protocol';
 import { TaskWatcher } from '../common/task-watcher';
 import { bindProcessTaskModule } from './process/process-task-frontend-module';
 import { TaskSchemaUpdater } from './task-schema-updater';
 import { TaskActionProvider, ConfigureTaskAction } from './task-action-provider';
+import { TaskDefinitionRegistryImpl } from './task-definition-registry';
+import { ProblemMatcherRegistryImpl } from './task-problem-matcher-registry';
+import { ProblemPatternRegistryImpl } from './task-problem-pattern-registry';
 import '../../src/browser/style/index.css';
 import './tasks-monaco-contribution';
 
@@ -54,6 +57,10 @@ export default new ContainerModule(bind => {
         const taskWatcher = ctx.container.get(TaskWatcher);
         return connection.createProxy<TaskServer>(taskPath, taskWatcher.getTaskClient());
     }).inSingletonScope();
+
+    bind(TaskDefinitionRegistry).to(TaskDefinitionRegistryImpl).inSingletonScope();
+    bind(ProblemMatcherRegistry).to(ProblemMatcherRegistryImpl).inSingletonScope();
+    bind(ProblemPatternRegistry).to(ProblemPatternRegistryImpl).inSingletonScope();
 
     createCommonBindings(bind);
 

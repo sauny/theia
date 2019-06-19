@@ -22,6 +22,8 @@ import { Event } from '@theia/core';
 import { expect } from 'chai';
 import { TaskConfiguration } from '@theia/task/src/common';
 import { ProcessTaskConfiguration } from '@theia/task/lib/common/process/task-protocol';
+import { TaskDefinitionRegistry } from '@theia/task/lib/common/task-protocol';
+import { TaskDefinitionRegistryImpl } from '@theia/task/lib/browser/task-definition-registry';
 
 // The object under test.
 let taskProvider: CppTaskProvider;
@@ -67,6 +69,7 @@ beforeEach(function () {
     const container: Container = new Container();
     container.bind(CppTaskProvider).toSelf().inSingletonScope();
     container.bind(TaskResolverRegistry).toSelf().inSingletonScope();
+    container.bind(TaskDefinitionRegistry).to(TaskDefinitionRegistryImpl).inSingletonScope();
     container.bind(CppBuildConfigurationManager).to(MockCppBuildConfigurationManager);
     taskProvider = container.get(CppTaskProvider);
 

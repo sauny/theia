@@ -25,6 +25,8 @@ import { FileSystemNode } from '@theia/filesystem/lib/node/node-filesystem';
 import { bindCppPreferences } from './cpp-preferences';
 import { PreferenceService } from '@theia/core/lib/browser/preferences/preference-service';
 import { MockPreferenceService } from '@theia/core/lib/browser/preferences/test/mock-preference-service';
+import { TaskDefinitionRegistry } from '@theia/task/lib/common/task-protocol';
+import { TaskDefinitionRegistryImpl } from '@theia/task/lib/browser/task-definition-registry';
 
 let container: Container;
 
@@ -33,6 +35,7 @@ beforeEach(function () {
         bind(CppBuildConfigurationManager).to(CppBuildConfigurationManagerImpl).inSingletonScope();
         bind(StorageService).to(MockStorageService).inSingletonScope();
         bind(FileSystem).to(FileSystemNode).inSingletonScope();
+        bind(TaskDefinitionRegistry).to(TaskDefinitionRegistryImpl).inSingletonScope();
         bindCppPreferences(bind);
         bind(PreferenceService).to(MockPreferenceService).inSingletonScope();
     });
