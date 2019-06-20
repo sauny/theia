@@ -81,14 +81,14 @@ To get this working, you need to enable clangd's global index using the
 
 ## Using the clang-tidy linter
 
-Note: This functionality is available when using clangd 9 and later.
+**Note: This functionality is available when using clangd 9 and later.**
 
-You can set the preference 'cpp.clangTidy' to enable the clang-tidy linter included in clangd. When the preference is set, there are two ways to chose which of its built-in checks clang-tidy will use:
+You can set the preference 'cpp.clangTidy' to enable the clang-tidy linter included in clangd. When the preference is set, there are two ways to choose which of its built-in checks clang-tidy will use:
 
 - using the preferences:  'cpp.clangTidyChecks'
 - using the file '.clang-tidy' . The file is located in the same folder of the files or a parent folder.
 
-Note: using the preference checks will supersede the value found in the .clang-tidy file.
+**Note**: When the preference setting for "cpp.clangTidyChecks" is set, the configs will be merged with the configuration found in ".clang-tidy" file. If you want to drop the configs from ".clang-tidy", you'd need to disable it in "cpp.clangTidyChecks" with **"cpp.clangTidyChecks": "-*"**.
 
 The syntax used to fill the checks can be found at http://clang.llvm.org/extra/clang-tidy/
 
@@ -101,6 +101,28 @@ There are two ways to configure clang-tidy's checks: through a Theia preference 
 
     - for the .clang-tidy file: Checks: "-*,readability-*"
         - Meaning: disable all list-checks and enable all readability-* checks
+
+### Using clang-tidy as a task
+
+In .theia/tasks.json, add the following:
+
+```json
+   {
+        "label": "[Task] clang-tidy",
+        "type": "shell",
+        "cwd": "${workspaceFolder}",
+        "command": "clang-tidy",
+        "args": [
+            "*"
+        ],
+        "options": {},
+        "problemMatcher": [
+            "$clangTidyMatcher"
+        ]
+   }
+```
+
+If you want a description for each task field, see [theia/packages/task/src/browser/task-schema-updater.ts]( https://github.com/theia-ide/theia/blob/531aa3bde8dea7f022ea41beaee3aace65ce54de/packages/task/src/browser/task-schema-updater.ts#L62 )
 
 ## License
 

@@ -16,6 +16,7 @@
 
 import parseArgv = require('string-argv');
 import { inject, injectable, postConstruct } from 'inversify';
+import { ProblemMatcherRegistry, ProblemPatternRegistry } from '@theia/task/lib/common/task-protocol';
 import { ProcessTaskConfiguration } from '@theia/task/lib/common/process/task-protocol';
 import { TaskContribution, TaskProvider, TaskProviderRegistry, TaskResolver, TaskResolverRegistry } from '@theia/task/lib/browser/task-contribution';
 import { CppBuildConfigurationManager, CppBuildConfiguration } from './cpp-build-configurations';
@@ -37,10 +38,33 @@ export class CppTaskProvider implements TaskContribution, TaskProvider, TaskReso
     @inject(TaskResolverRegistry) protected readonly taskResolverRegistry: TaskResolverRegistry;
     @inject(TaskDefinitionRegistry) protected readonly taskDefinitionRegistry: TaskDefinitionRegistry;
     @inject(CppBuildConfigurationManager) protected readonly cppBuildConfigurationManager: CppBuildConfigurationManager;
+    @inject(ProblemMatcherRegistry) protected readonly problemMatcherRegistry: ProblemMatcherRegistry;
+    @inject(ProblemPatternRegistry) protected readonly problemPatternRegistry: ProblemPatternRegistry;
 
     @postConstruct()
     protected init(): void {
         this.registerTaskDefinition();
+        this.problemPatternRegistry.register({
+            'name': 'clangTidyPattern',
+            'regexp': '^(.+):(\\d+):(\\d+):\\s+(error|warning|info|note):\\s+(.+?)\\s+\\[(.+)\\]$',
+            'file': 1,
+            'line': 2,
+            'character': 3,
+            'severity': 4,
+            'message': 5,
+            'code': 6
+        });
+        this.problemMatcherRegistry.register({
+            'name': 'clangTidyMatcher',
+            'label': 'Clang-tidy problems',
+            'owner': 'clang-tidy',
+            'source': 'clang-tidy-task',
+            'applyTo': 'alldocuments',
+            'fileLocation': [
+                'absolute'
+            ],
+            'pattern': 'clangTidyPattern'
+        });
     }
 
     registerProviders(registry: TaskProviderRegistry) {
