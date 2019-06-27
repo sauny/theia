@@ -98,7 +98,9 @@ before_install:
   - export PATH=$HOME/.yarn/bin:$PATH
 install:
   - THEIA_SKIP_NPM_PREPARE=1 yarn install
-  - npx electron-codecs-test
+  - rm -rf node_modules/@theia/electron/download # remove cached library
+  - npx electron-replace-ffmpeg # re-download library (in case it was cached)
+  - npx electron-codecs-test # test library
   - yarn prepare
   - scripts/check_git_status.sh
 script:
@@ -132,7 +134,7 @@ jobs:
     install: skip
     before_deploy:
       - |
-        if ! [ "$BEFORE_DEPLOY_RUN" ]; then 
+        if ! [ "$BEFORE_DEPLOY_RUN" ]; then
           export BEFORE_DEPLOY_RUN=1
           printf "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}\n" >> ~/.npmrc
           yarn
